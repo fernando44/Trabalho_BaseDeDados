@@ -1,23 +1,29 @@
 from flask import Flask, Blueprint, request, jsonify
 import psycopg2
 
-con = psycopg2.connect(
-database="principal",
-user="postgres",
-password="senha",
-host="localhost",
-port= '5432'
-)
-cursor_obj = con.cursor()
+service = Blueprint('service',__name__)
+
+
+@service.route('/', methods=['GET'])
+def teste():
+    return "APIII v.1.0"
 
 #
 # RETORNAR TODOS OS CLIENTES
 #
-@service.route('/', methods=['GET'])
+@service.route('/aue', methods=['GET'])
 def get_all():
     clientes = []
     try:
-        cursor_obj.execute("SELECT * FROM tabela")
+        con = psycopg2.connect(
+        database="streaming",
+        user="postgres",
+        password="admin",
+        host="localhost",
+        port= '5432'
+        )
+        cursor_obj = con.cursor()
+        cursor_obj.execute("SELECT * FROM usuario")
         
     except Exception as e:
         print(e)
