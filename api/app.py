@@ -1,3 +1,7 @@
+#Alunos
+#Fernando Chiareli Ferreira - 
+#Kevin dourado - 
+
 #Incio das importacoes
 from flask import Flask#importacao padrao para utilizacao do flask
 from flask import jsonify#para formatar as informações e enviar ao navegador 
