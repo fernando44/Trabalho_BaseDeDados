@@ -65,7 +65,7 @@ def add():
 def add():
      print(idMusica)
      print("procurar musica pelo id")
-     albuns = request.get_json()
+     musicas = request.get_json()
      return 0
 
 #
