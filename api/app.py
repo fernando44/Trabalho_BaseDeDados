@@ -3,8 +3,10 @@
 #Kevin dourado - 
 
 #Incio das importacoes
+import uuid
 from flask import Flask, request#importacao padrao para utilizacao do flask
-from flask import jsonify#para formatar as informações e enviar ao navegador 
+from flask import jsonify
+import flask#para formatar as informações e enviar ao navegador 
 from flask_cors import CORS#importacao padrao para utilizacao do flask
 import psycopg2#importacao para conexao com base de dados postgree
 #fim das importacoes
@@ -28,13 +30,20 @@ def info():
 #
 @app.route('/dbproj/user', methods=['POST'])#adicionar usuario a base de dados
 def add():
-    users = request.get_json()
+    users = flask.request.get_json()
     try:
-        print( type(users['id']))#teste apagar
+        # Gera um UUID aleatório
+        id_aleatorio = uuid.uuid4()
+        # Obtém a representação inteira do UUID
+        id_aleatorio_int = id_aleatorio.int
+
         conn = conectar()
         cur = conn.cursor()
-        cur.execute("INSERT INTO usuario (id, nome, idade, sexo, address, number, saldofinal, premium_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", 
-                    (users['id'], users['nome'], users['idade'], users['sexo'], users['address'], users['number'], users['saldofinal'], users['premium_status']) )
+        
+        statement = "INSERT INTO usuario (id, nome, idade, sexo, address, number, saldofinal, premium_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        values = (id_aleatorio_int, users['nome'], users['idade'], users['sexo'], users['address'], users['number'], users['saldofinal'], users['premium_status'])
+        cur.execute(statement,values)
+
         conn.commit()
         resposta = jsonify(
             {
@@ -61,12 +70,42 @@ def addMusic():
 #
 # Procurar musica
 #
-@app.route('/dbproj/song/<idMusica>', methods=['GET'])#adicionar usuario a base de dados
-def procuraMusica():
-     print(idMusica)
-     print("procurar musica pelo id")
-     musicas = request.get_json()
-     return 0
+@app.route('/dbproj/song/<ismn>', methods=['GET'])
+def procuraMusica(ismn):
+    try:
+        conn = conectar()
+        cur = conn.cursor()
+
+        # Consulta SQL para buscar a música pelo ID
+        statement = "SELECT * FROM songs WHERE ismn = %s"
+        cur.execute(statement, (ismn,))
+        musica = cur.fetchone()
+
+        if musica:
+            # Extrai os dados da música
+            ismn, nome, duracao, = musica
+
+            # Cria um dicionário com os dados da música
+            musica_dict = {
+                "ismn": ismn,
+                "nome": nome,
+                "duracao": duracao,
+            }
+
+            # Retorna a música encontrada em formato JSON
+            return jsonify(musica_dict), 200
+        else:
+            # Retorna uma mensagem de erro se a música não for encontrada
+            return jsonify({"erro": "Música não encontrada"}), 404
+
+    except (psycopg2.Error, Exception) as error:
+        # Trata possíveis erros
+        return jsonify({"erro": str(error)}), 500
+
+    finally:
+        # Fecha a conexão com o banco de dados
+        if conn:
+            conn.close()
 
 #
 # Procurar artista (info artistas)
