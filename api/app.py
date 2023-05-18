@@ -52,17 +52,17 @@ def add():
 #
 # Adicionar musica
 #
-@app.route('/dbproj/album', methods=['POST'])#adicionar usuario a base de dados
-def add():
-     print("Verificar se é um usuario artista\nadicionar a musica")
-     albuns = request.get_json()
-     return 0
+@app.route('/dbproj/album', methods=['POST'])#adicionar musica a base de dados
+def addMusic():
+    print("Verificar se é um usuario artista\nadicionar a musica")
+    albuns = request.get_json()
+    return 0
 
 #
 # Procurar musica
 #
 @app.route('/dbproj/song/<idMusica>', methods=['GET'])#adicionar usuario a base de dados
-def add():
+def procuraMusica():
      print(idMusica)
      print("procurar musica pelo id")
      musicas = request.get_json()
@@ -72,7 +72,7 @@ def add():
 # Procurar artista (info artistas)
 #
 @app.route('/dbproj/artist_info/<idArtista>', methods=['GET'])#adicionar usuario a base de dados
-def add():
+def procuraArtista():
      print(idArtista)
      print("procurar artista pelo id")
      albuns = request.get_json()
