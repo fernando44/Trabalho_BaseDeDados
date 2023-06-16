@@ -7,23 +7,9 @@ from componentes.baseDeDados import conectar,secret_key
 
 Registro = Blueprint('Registro',__name__)
 
-# Adicionar usuario / logar
-@Registro.route('/dbproj/user', methods=['POST'])#adicionar usuario a base de dados
-def add():
+@Registro.route('/dbproj/user', methods=['POST'])#adicionar usuario
+def adicionar():
     users = flask.request.get_json()
-
-    if len(users)==6:
-        resp=adicionar(users)        
-    
-    elif len(users)==2:
-        resp=logar(users)
-    
-    else:
-        resp.headers["status"] = "400"#envia o status
-    
-    return resp
-
-def adicionar(users):
     try:#criar
             # Gera um UUID aleatório
             id = uuid.uuid4()
@@ -53,8 +39,9 @@ def adicionar(users):
         conn.close()
     return resposta
 
-
-def logar(users):
+@Registro.route('/dbproj/user', methods=['PUT'])#Logar
+def logar():
+    users = flask.request.get_json()
     try:#login
             conn = conectar()
             cur = conn.cursor()
